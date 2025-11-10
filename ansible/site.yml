@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+  vars_files:
+    - vars/custom_vars.yml
+  roles:
+    - ubuntu2204STIG
+
+  tasks:
+    - name: Ustaw banner logowania (custom hardening)
+      copy:
+        dest: /etc/issue.net
+        content: |
+          *** UWAGA: System monitorowany zgodnie z polityką bezpieczeństwa ***
+          Dostęp tylko dla upoważnionych użytkowników.
+      notify: Restart SSH
+
+    # Jeśli to Ubuntu Pro
+    #- name: Enable Ubuntu Pro USG
+    #  command: pro enable usg
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: ssh
+        state: restarted
+

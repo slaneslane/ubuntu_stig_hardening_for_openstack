@@ -1,0 +1,62 @@
+{
+  "variables": {
+    "ubuntu_version": "22.04",
+    "image_name": "ubuntu-22.04-hardened-stig",
+    "source_image_url": "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+  },
+
+  "builders": [
+    {
+      "type": "qemu",
+      "iso_url": "{{user `source_image_url`}}",
+      "iso_checksum": "none",
+      "output_directory": "output-{{user `image_name`}}",
+      "shutdown_command": "sudo shutdown -P now",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "disk_size": 8192,
+      "headless": true,
+      "ssh_username": "ubuntu",
+      "ssh_password": "ubuntu",
+      "ssh_timeout": "30m",
+      "qemuargs": [
+        ["-m", "2048M"],
+        ["-smp", "2"]
+      ]
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get update",
+        "sudo apt-get install -y python3 ansible git"
+      ]
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "ansible/site.yml",
+      "extra_arguments": ["--extra-vars", "@/home/packer/ansible/vars/custom_vars.yml"]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo cloud-init clean",
+        "sudo rm -rf /var/lib/cloud/instances/*",
+        "sudo truncate -s 0 /etc/machine-id",
+        "sudo rm -f /var/lib/dbus/machine-id"
+      ]
+    }
+  ],
+
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "output": "ubuntu-22.04-hardened-stig.qcow2"
+      }
+    ]
+  ]
+}
+

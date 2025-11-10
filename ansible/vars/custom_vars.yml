@@ -1,0 +1,13 @@
+# Wyłączenie konkretnej reguły STIG
+ubuntu2204STIG_stigrule_260546_Manage: False
+ubuntu2204STIG_stigrule_260546__etc_login_defs_Line: 'PASS_MAX_DAYS 60'
+
+# Zmiana długości hasła
+ubuntu2204STIG_stigrule_260565_Manage: True
+ubuntu2204STIG_stigrule_260565__etc_security_pwquality_conf_Line: 'minlen = 20'
+
+# Dodatkowe parametry SSH
+ubuntu2204STIG_stigrule_255001__etc_ssh_sshd_config_Line: 'Protocol 2'
+ubuntu2204STIG_stigrule_255002__etc_ssh_sshd_config_Line: 'PermitRootLogin no'
+ubuntu2204STIG_stigrule_255003__etc_ssh_sshd_config_Line: 'MaxAuthTries 3'
+
